@@ -13,7 +13,7 @@ const LoginPage = () => {
     await signIn("credentials", {
       email,
       password,
-      callbackUrl: "/dashboard",
+      callbackUrl: "/profile",
     })
   }
 

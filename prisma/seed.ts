@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 
 async function main() {
   const password = await bcrypt.hash("test123", 10)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const user = await prisma.user.create({
     data: {
       name: "Test User",
@@ -12,8 +13,6 @@ async function main() {
       password,
     },
   })
-
-  console.log("User created:", user)
 }
 
 main()
