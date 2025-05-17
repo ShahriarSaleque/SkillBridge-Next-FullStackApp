@@ -40,9 +40,13 @@ const EditProfileForm = ({ user }: EditProfileFormProps) => {
         if (!res.ok) throw new Error(await res.text())
         setSuccess(true)
       } catch (error) {
-        setError(
-          String(error) || "An error occurred while updating your profile."
-        )
+        if (error instanceof Error) {
+          setError(error.message)
+        } else if (typeof error === "string") {
+          setError(error)
+        } else {
+          setError("An unknown error occurred")
+        }
       }
     })
   }
