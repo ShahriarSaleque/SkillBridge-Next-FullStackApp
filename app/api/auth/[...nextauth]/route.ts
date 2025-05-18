@@ -4,7 +4,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
-
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -25,13 +24,13 @@ export const authOptions = {
           where: { email: email },
         })
 
-        // check if passwords match
+        
         if (!user || !user.password) {
           throw new Error("Invalid email or password")
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password)
-
+        // check if passwords match
         if (!isPasswordValid) {
           throw new Error("Invalid email or password")
         }
