@@ -10,8 +10,12 @@ import toast from "react-hot-toast"
 const RegisterPage = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
+  const [name, setName] = useState("")
+  const [bio, setBio] = useState("")
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [error, setError] = useState<any>()
+
   const [loading, setLoading] = useState(false)
 
   const router = useRouter()
@@ -26,20 +30,27 @@ const RegisterPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password, confirmPassword }),
+      body: JSON.stringify({ email, password, name, bio }),
     })
 
-    console.log("client", response)
+    const responseObject = await response.json()
 
     if (response.ok) {
       toast.success("Registration successful! Please log in.")
+      // TODO: Implement autologin
       router.push("/auth/login")
     } else {
-      setError("Registration failed. Please try again.")
+      setError({
+        message:
+          responseObject.message || "Registration failed. Please try again.",
+        error: responseObject.error,
+      })
     }
 
     setLoading(false)
   }
+
+  console.log("error", error)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-white">
@@ -53,29 +64,36 @@ const RegisterPage = () => {
           Register to your SkillBridge account
         </h2>
         <Input
+          label="Name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={error?.error?.includes("name") ? error : ""}
+        />
+        <Input
           label="Email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          error={error?.includes("email") ? error : ""}
+          error={error?.error?.includes("email") ? error : ""}
+        />
+        <Input
+          label="Bio"
+          type="text"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          error={error?.error?.includes("bio") ? error : ""}
         />
         <Input
           label="Password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          error={error?.includes("Password") ? error : ""}
+          error={error?.error?.includes("Password") ? error : ""}
         />
-        <Input
-          label="Confirm Password"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          error={error?.includes("ConfirmPassWord") ? error : ""}
-        />
-        {error && !error.includes("email") && !error.includes("Password") && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
+
+        <p className="text-sm text-red-500">{error?.message}</p>
+
         <Button type="submit" loading={loading}>
           Register
         </Button>
